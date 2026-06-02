@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aahar — Indian Nutrition Planner</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--saffron:#E8732A;--saffron-light:#FDF0E6;--saffron-mid:#F4A55A;--forest:#2D6A4F;--forest-light:#E8F5EE;--spice:#8B2635;--spice-light:#F9E8EA;--cream:#FEFBF3;--gray:#6B6560;--dark:#1A1410;--border:rgba(0,0,0,0.09);--r:16px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--dark);min-height:100vh;font-size:15px}
+.topbar{background:var(--dark);padding:15px 24px;display:flex;align-items:center;position:sticky;top:0;z-index:100}
+.logo{font-family:'Fraunces',serif;font-size:20px;color:var(--saffron-mid);font-weight:600}
+.logo span{color:#fff;font-weight:300;font-style:italic}
+.logo-sub{font-size:11px;color:rgba(255,255,255,0.35);margin-left:auto}
+.main{max-width:800px;margin:0 auto;padding:26px 16px 80px}
+.tabs{display:flex;gap:4px;background:rgba(0,0,0,0.07);border-radius:12px;padding:4px;margin-bottom:22px}
+.tab{flex:1;padding:9px 6px;border:none;background:transparent;border-radius:9px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--gray);cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:5px}
+.tab.active{background:white;color:var(--dark);font-weight:500;box-shadow:0 1px 4px rgba(0,0,0,0.1)}
+.tc{display:none}.tc.active{display:block}
+.stitle{font-family:'Fraunces',serif;font-size:24px;font-weight:600;color:var(--dark);margin-bottom:4px}
+.ssub{font-size:13px;color:var(--gray);margin-bottom:20px}
+.card{background:white;border-radius:var(--r);border:1px solid var(--border);padding:20px;margin-bottom:13px}
+.ctitle{font-family:'Fraunces',serif;font-size:15px;font-weight:600;color:var(--dark);margin-bottom:13px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:11px}
+.row.one{grid-template-columns:1fr}
+.field{display:flex;flex-direction:column;gap:4px}
+label{font-size:11px;font-weight:500;color:var(--gray);letter-spacing:.4px;text-transform:uppercase}
+input,select,textarea{width:100%;padding:10px 12px;border:1px solid rgba(0,0,0,0.12);border-radius:9px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--dark);background:var(--cream);outline:none;-webkit-appearance:none;appearance:none;transition:border-color .15s,box-shadow .15s}
+input:focus,select:focus,textarea:focus{border-color:var(--saffron);box-shadow:0 0 0 3px rgba(232,115,42,.1);background:white}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236B6560' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:34px;cursor:pointer}
+.tags{display:flex;flex-wrap:wrap;gap:7px}
+.tag{padding:6px 13px;border-radius:20px;border:1px solid rgba(0,0,0,0.11);font-size:13px;cursor:pointer;transition:all .13s;background:var(--cream);color:var(--gray);user-select:none}
+.tag:hover{border-color:var(--saffron);color:var(--saffron)}
+.tag.sel{background:var(--saffron-light);border-color:var(--saffron);color:var(--saffron);font-weight:500}
+.tag.dsel{background:var(--spice-light);border-color:var(--spice);color:var(--spice);font-weight:500}
+.bmi-wrap{margin-top:13px;background:rgba(0,0,0,0.05);border-radius:8px;height:7px;overflow:hidden}
+.bmi-fill{height:100%;border-radius:8px;transition:width .5s,background .5s}
+.bmi-info{display:flex;justify-content:space-between;margin-top:5px;font-size:11px;color:var(--gray)}
+.bmi-val{font-family:'Fraunces',serif;font-size:24px;font-weight:600}
+.bmi-badge{font-size:12px;padding:3px 10px;border-radius:20px;font-weight:500;margin-left:8px;vertical-align:middle}
+.btn{width:100%;padding:13px 20px;background:var(--dark);color:white;border:none;border-radius:12px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;cursor:pointer;transition:all .18s;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:6px}
+.btn:hover{background:var(--saffron);transform:translateY(-1px)}
+.ghost{padding:9px 18px;background:white;border:1px solid var(--border);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--dark);cursor:pointer;transition:all .13s}
+.ghost:hover{background:var(--saffron-light);border-color:var(--saffron)}
+.rnote{font-size:12px;color:var(--gray);background:var(--saffron-light);border-radius:8px;padding:8px 12px;margin-top:9px;border-left:3px solid var(--saffron)}
+/* macro strip */
+.mstrip{display:grid;grid-template-columns:repeat(5,1fr);gap:9px;margin-bottom:16px}
+.mc{background:white;border-radius:12px;border:1px solid var(--border);padding:13px 8px;text-align:center}
+.mc-v{font-family:'Fraunces',serif;font-size:20px;font-weight:600;line-height:1}
+.mc-u{font-size:11px;color:var(--gray)}
+.mc-l{font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--gray);margin-top:3px}
+/* meal block */
+.mb{background:white;border-radius:var(--r);border:1px solid var(--border);margin-bottom:13px;overflow:hidden}
+.mh{padding:13px 17px;display:flex;align-items:center;gap:9px;border-bottom:1px solid var(--border);background:var(--cream)}
+.mtime{font-size:11px;font-weight:500;color:var(--saffron);text-transform:uppercase;letter-spacing:.5px}
+.mname{font-family:'Fraunces',serif;font-size:15px;font-weight:600;color:var(--dark)}
+.mpills{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap}
+.mp{font-size:11px;padding:3px 8px;border-radius:20px;font-weight:500;white-space:nowrap}
+.pk{background:#FEF3C7;color:#92400E}
+.pc{background:#EFF6FF;color:#1E40AF}
+.pp{background:#F0FDF4;color:#166534}
+.pf{background:#FEF2F2;color:#991B1B}
+.mbody{padding:15px 17px}
+.itbl{width:100%;border-collapse:collapse;font-size:13px}
+.itbl th{text-align:left;padding:5px 7px;font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.4px;color:var(--gray);border-bottom:1px solid var(--border)}
+.itbl td{padding:7px 7px;border-bottom:1px solid rgba(0,0,0,0.04);vertical-align:top}
+.itbl tr:last-child td{border-bottom:none}
+.itbl td:first-child{font-weight:500}
+.dim{color:var(--gray);font-size:12px}
+.num{color:#D4930A;font-weight:500;font-size:12px;text-align:right}
+.bars{margin-top:11px;padding-top:11px;border-top:1px solid var(--border)}
+.brow{display:flex;align-items:center;gap:9px;margin-bottom:5px}
+.blbl{font-size:11px;color:var(--gray);width:52px;text-align:right;flex-shrink:0}
+.btrack{flex:1;background:rgba(0,0,0,0.06);border-radius:4px;height:5px;overflow:hidden}
+.bfill{height:100%;border-radius:4px}
+.bnum{font-size:11px;font-weight:500;color:var(--dark);width:38px;flex-shrink:0}
+.tip{font-size:12px;color:var(--gray);margin-top:11px;padding:8px 12px;background:var(--cream);border-radius:8px;border-left:3px solid var(--saffron)}
+/* avoid */
+.avoid-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:11px}
+.avitem{background:var(--spice-light);border-radius:10px;padding:11px 13px;border:1px solid rgba(139,38,53,0.12)}
+.avname{font-weight:500;color:var(--spice);font-size:13px;margin-bottom:3px}
+.avreason{font-size:12px;color:#6B2030;line-height:1.45}
+.safeitem{background:var(--forest-light);border-radius:10px;padding:10px 13px;border:1px solid rgba(45,106,79,0.15);font-size:13px;color:var(--forest);margin-bottom:7px}
+.safeitem b{display:block;font-weight:500;margin-bottom:2px}
+/* banner */
+.pb{background:var(--dark);border-radius:14px;padding:15px 19px;margin-bottom:15px;display:flex;flex-wrap:wrap;gap:16px}
+.pbl{font-size:10px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.5px}
+.pbv{font-family:'Fraunces',serif;font-size:16px;color:white;font-weight:600}
+/* ingr check */
+.ca{border-radius:10px;padding:11px 13px;margin-bottom:8px;font-size:13px}
+.ca.danger{background:var(--spice-light);border:1px solid rgba(139,38,53,.2);color:var(--spice)}
+.ca.warn{background:#FEF3C7;border:1px solid rgba(212,147,10,.25);color:#854F0B}
+.ca.good{background:var(--forest-light);border:1px solid rgba(45,106,79,.2);color:var(--forest)}
+.ca b{display:block;margin-bottom:3px;font-weight:500}
+.hidden{display:none!important}
+textarea{min-height:80px;resize:vertical}
+@media(max-width:520px){.row{grid-template-columns:1fr}.mstrip{grid-template-columns:repeat(3,1fr)}.avoid-grid{grid-template-columns:1fr}.mpills{display:none}}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="logo">Aahar <span>by India</span></div>
+  <div class="logo-sub">Free · No signup · Instant</div>
+</div>
+<div class="main">
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('plan')" id="tab-plan">🥗 Meal Plan</button>
+    <button class="tab" onclick="switchTab('check')" id="tab-check">🔍 Ingredient Check</button>
+    <button class="tab" onclick="switchTab('avoid')" id="tab-avoid">🚫 What to Avoid</button>
+  </div>
+
+  <!-- TAB 1 -->
+  <div class="tc active" id="content-plan">
+    <div id="form-sec">
+      <p class="stitle">Your Nutrition Profile</p>
+      <p class="ssub">Get a full Indian meal plan with exact calories, carbs, protein & fat for every meal — free, instant, no login.</p>
+      <div class="card">
+        <div class="ctitle">📏 Body Measurements</div>
+        <div class="row">
+          <div class="field"><label>Age</label><input type="number" id="age" placeholder="28" min="5" max="100"></div>
+          <div class="field"><label>Gender</label><select id="gender"><option value="">Select…</option><option>Male</option><option>Female</option><option>Other</option></select></div>
+        </div>
+        <div class="row">
+          <div class="field"><label>Height (cm)</label><input type="number" id="height" placeholder="165" oninput="updateBMI()"></div>
+          <div class="field"><label>Weight (kg)</label><input type="number" id="weight" placeholder="68" oninput="updateBMI()"></div>
+        </div>
+        <div id="bmi-display" class="hidden">
+          <div style="display:flex;align-items:center;margin-bottom:7px"><span class="bmi-val" id="bmi-num"></span><span class="bmi-badge" id="bmi-badge"></span></div>
+          <div class="bmi-wrap"><div class="bmi-fill" id="bmi-bar"></div></div>
+          <div class="bmi-info"><span>Underweight &lt;18.5</span><span>Normal 18.5–24.9</span><span>Overweight 25+</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="ctitle">🗺 Region in India</div>
+        <div class="row one"><div class="field"><label>State</label>
+          <select id="region" onchange="updateRNote()">
+            <option value="">Select your state…</option>
+            <optgroup label="North India"><option>Punjab</option><option>Haryana</option><option>Himachal Pradesh</option><option>Uttarakhand</option><option>Uttar Pradesh</option><option>Delhi</option><option>Jammu & Kashmir</option></optgroup>
+            <optgroup label="Central India"><option>Madhya Pradesh</option><option>Chhattisgarh</option><option>Rajasthan</option></optgroup>
+            <optgroup label="East India"><option>West Bengal</option><option>Bihar</option><option>Jharkhand</option><option>Odisha</option><option>Assam</option><option>Sikkim</option><option>Meghalaya</option><option>Manipur</option><option>Tripura</option></optgroup>
+            <optgroup label="West India"><option>Maharashtra</option><option>Gujarat</option><option>Goa</option></optgroup>
+            <optgroup label="South India"><option>Karnataka</option><option>Tamil Nadu</option><option>Kerala</option><option>Andhra Pradesh</option><option>Telangana</option><option>Puducherry</option></optgroup>
+          </select>
+        </div></div>
+        <div id="rnote" class="rnote hidden"></div>
+      </div>
+      <div class="card">
+        <div class="ctitle">🏃 Lifestyle & Goal</div>
+        <p style="font-size:12px;color:var(--gray);margin-bottom:9px">Activity Level</p>
+        <div class="tags" id="act-grp">
+          <div class="tag" onclick="solo(this,'act-grp')">Sedentary (desk job)</div>
+          <div class="tag" onclick="solo(this,'act-grp')">Lightly active</div>
+          <div class="tag sel" onclick="solo(this,'act-grp')">Moderately active</div>
+          <div class="tag" onclick="solo(this,'act-grp')">Very active</div>
+          <div class="tag" onclick="solo(this,'act-grp')">Athlete</div>
+        </div>
+        <p style="font-size:12px;color:var(--gray);margin:11px 0 9px">Diet Preference</p>
+        <div class="tags" id="diet-grp">
+          <div class="tag sel" onclick="solo(this,'diet-grp')">Vegetarian</div>
+          <div class="tag" onclick="solo(this,'diet-grp')">Eggetarian</div>
+          <div class="tag" onclick="solo(this,'diet-grp')">Non-Vegetarian</div>
+          <div class="tag" onclick="solo(this,'diet-grp')">Vegan</div>
+          <div class="tag" onclick="solo(this,'diet-grp')">Jain</div>
+        </div>
+        <p style="font-size:12px;color:var(--gray);margin:11px 0 9px">Goal</p>
+        <div class="tags" id="goal-grp">
+          <div class="tag" onclick="solo(this,'goal-grp')">Lose weight</div>
+          <div class="tag sel" onclick="solo(this,'goal-grp')">Stay healthy</div>
+          <div class="tag" onclick="solo(this,'goal-grp')">Gain muscle</div>
+          <div class="tag" onclick="solo(this,'goal-grp')">Manage disease</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="ctitle">🩺 Health Conditions</div>
+        <div class="tags" id="dis-grp">
+          <div class="tag" onclick="multi(this,'dsel')">Diabetes (Type 2)</div>
+          <div class="tag" onclick="multi(this,'dsel')">Diabetes (Type 1)</div>
+          <div class="tag" onclick="multi(this,'dsel')">Hypertension</div>
+          <div class="tag" onclick="multi(this,'dsel')">Heart Disease</div>
+          <div class="tag" onclick="multi(this,'dsel')">High Cholesterol</div>
+          <div class="tag" onclick="multi(this,'dsel')">PCOD / PCOS</div>
+          <div class="tag" onclick="multi(this,'dsel')">Thyroid (Hypo)</div>
+          <div class="tag" onclick="multi(this,'dsel')">Thyroid (Hyper)</div>
+          <div class="tag" onclick="multi(this,'dsel')">Anemia</div>
+          <div class="tag" onclick="multi(this,'dsel')">Kidney Disease</div>
+          <div class="tag" onclick="multi(this,'dsel')">Acidity / GERD</div>
+          <div class="tag" onclick="multi(this,'dsel')">IBS / Gut Issues</div>
+          <div class="tag" onclick="multi(this,'dsel')">Lactose Intolerance</div>
+          <div class="tag" onclick="multi(this,'dsel')">Gluten Sensitivity</div>
+          <div class="tag" onclick="multi(this,'dsel')">Vitamin D Deficiency</div>
+          <div class="tag" onclick="multi(this,'dsel')">None</div>
+        </div>
+      </div>
+      <button class="btn" onclick="generatePlan()">✨ Generate My Meal Plan</button>
+    </div>
+    <div id="result-sec" class="hidden"></div>
+  </div>
+
+  <!-- TAB 2 -->
+  <div class="tc" id="content-check">
+    <p class="stitle">Ingredient Checker</p>
+    <p class="ssub">Paste the ingredients from any Indian packaged food. We'll flag maida, palm oil, harmful INS numbers, excess sugar & sodium.</p>
+    <div class="card">
+      <div class="ctitle">📋 Paste Ingredients</div>
+      <div class="field" style="margin-bottom:11px"><label>Product Name (optional)</label><input type="text" id="prod-name" placeholder="e.g. Maggi Masala Noodles"></div>
+      <div class="field"><label>Ingredients List</label><textarea id="ing-input" placeholder="e.g. Refined wheat flour (maida), palm oil, salt, sugar, INS 627, INS 631…"></textarea></div>
+      <button class="btn" style="margin-top:11px" onclick="checkIngr()">🔍 Check Ingredients</button>
+    </div>
+    <div id="check-result"></div>
+  </div>
+
+  <!-- TAB 3 -->
+  <div class="tc" id="content-avoid">
+    <p class="stitle">What to Avoid</p>
+    <p class="ssub">Personalised restaurant dishes, street foods & packaged products to skip based on your conditions.</p>
+    <div id="avoid-prompt" class="card" style="background:var(--saffron-light);border-color:var(--saffron-mid)">
+      <p style="font-size:13px;color:var(--saffron);font-weight:500">⚠ Generate your Meal Plan first — this will auto-fill.</p>
+    </div>
+    <div id="avoid-content"></div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════
+// FOOD DATABASE — Indian foods with macros
+// ═══════════════════════════════════════════
+const FOODS = {
+  // format: [name, portion, kcal, carbs_g, protein_g, fat_g, fiber_g, note]
+  warm_water:       ["Warm water + lemon",     "1 glass (250ml)",  5,   1,  0, 0, 0, "Kickstarts digestion"],
+  soaked_almonds:   ["Soaked almonds",         "5 pieces (10g)",   58,  2,  2, 5, 1, "Healthy fats & Vit E"],
+  soaked_raisins:   ["Soaked raisins",         "10 pieces (15g)",  45,  11, 0, 0, 0, "Quick energy, iron"],
+  methi_water:      ["Methi soaked water",     "1 glass (200ml)",  10,  2,  0, 0, 1, "Controls blood sugar"],
+  jeera_water:      ["Jeera water",            "1 glass (200ml)",  8,   1,  0, 0, 0, "Aids digestion"],
+  turmeric_milk:    ["Haldi doodh (warm)",     "1 cup (200ml)",    120, 12, 6, 5, 0, "Anti-inflammatory"],
+  banana:           ["Banana",                 "1 medium (100g)",  89,  23, 1, 0, 3, "Potassium & energy"],
+  apple:            ["Apple",                  "1 medium (150g)",  78,  21, 0, 0, 4, "Fibre & antioxidants"],
+  papaya:           ["Papaya",                 "1 cup (150g)",     65,  16, 1, 0, 3, "Digestive enzymes"],
+  watermelon:       ["Watermelon",             "2 cups (300g)",    90,  22, 2, 0, 1, "Hydrating, cooling"],
+  mango:            ["Mango",                  "1 small (150g)",   100, 25, 1, 0, 3, "Vit A & C"],
+  guava:            ["Guava",                  "1 medium (100g)",  68,  14, 3, 1, 5, "Highest Vit C fruit"],
+  orange:           ["Orange",                 "1 medium (130g)",  62,  15, 1, 0, 3, "Vit C, iron absorption"],
+  poha:             ["Poha (cooked)",          "1 plate (150g)",   250, 45, 5, 4, 2, "Light, easy to digest"],
+  upma:             ["Upma (rava)",            "1 plate (150g)",   210, 35, 5, 5, 2, "B vitamins & iron"],
+  idli:             ["Idli",                   "3 pieces (150g)",  180, 38, 6, 1, 2, "Fermented, probiotic"],
+  dosa:             ["Plain dosa",             "1 medium (80g)",   168, 32, 4, 2, 1, "Light & crispy"],
+  masala_dosa:      ["Masala dosa",            "1 piece (200g)",   350, 52, 7, 12, 3,"With potato filling"],
+  uttapam:          ["Uttapam",                "2 pieces (160g)",  270, 42, 8, 6, 3, "Thick, filling"],
+  oats_porridge:    ["Oats porridge (milk)",   "1 bowl (200g)",    180, 30, 7, 4, 4, "High fibre, fills long"],
+  daliya:           ["Daliya khichdi",         "1 bowl (200g)",    190, 35, 7, 3, 4, "Broken wheat, high fibre"],
+  besan_chilla:     ["Besan chilla",           "2 pieces (120g)",  200, 22, 12, 7, 4,"High protein breakfast"],
+  moong_chilla:     ["Moong dal chilla",       "2 pieces (120g)",  190, 24, 13, 4, 5,"Protein-rich, light"],
+  paratha:          ["Whole wheat paratha",    "2 medium (120g)",  280, 40, 7, 10, 4,"With minimal ghee"],
+  missi_roti:       ["Missi roti",             "2 medium (100g)",  240, 35, 10, 6, 5,"Besan+wheat, protein++"],
+  makki_roti:       ["Makki ki roti",          "2 medium (120g)",  260, 48, 5, 6, 4, "Cornmeal, Punjab staple"],
+  ragi_roti:        ["Ragi roti",              "2 medium (120g)",  240, 44, 6, 3, 5, "Calcium & iron rich"],
+  bajra_roti:       ["Bajra roti",             "2 medium (100g)",  220, 40, 6, 4, 4, "Heart healthy millet"],
+  jowar_roti:       ["Jowar roti",             "2 medium (100g)",  220, 45, 6, 2, 5, "Gluten-free millet"],
+  wheat_roti:       ["Whole wheat roti",       "2 medium (120g)",  240, 42, 7, 3, 4, "Fibre & complex carbs"],
+  egg_bhurji:       ["Egg bhurji (2 eggs)",    "1 plate (120g)",   210, 4,  16, 14, 0,"Complete protein"],
+  boiled_eggs:      ["Boiled eggs",            "2 eggs (100g)",    155, 1,  13, 11, 0,"Best protein source"],
+  paneer_bhurji:    ["Paneer bhurji (100g)",   "1 serving",        210, 4,  14, 15, 0,"Protein, calcium"],
+  sambar:           ["Sambar (dal+veg)",       "1 bowl (200ml)",   120, 14, 7,  3,  4,"South Indian protein+"],
+  rasam:            ["Rasam",                  "1 bowl (200ml)",   40,  6,  2,  1,  1,"Digestive, tamarind"],
+  dal_tadka:        ["Dal tadka (arhar)",      "1 katori (150ml)", 130, 18, 8,  4,  4,"Protein & fibre"],
+  moong_dal:        ["Moong dal (yellow)",     "1 katori (150ml)", 110, 16, 8,  2,  5,"Light, easy protein"],
+  rajma:            ["Rajma curry",            "1 katori (150g)",  180, 25, 11, 4,  7,"Kidney beans, iron"],
+  chana_masala:     ["Chana masala",           "1 katori (150g)",  200, 28, 11, 5,  8,"Chickpeas, fibre+"],
+  sprouts:          ["Mixed sprouts",          "1 cup (100g)",     99,  18, 7,  1,  4,"Live enzymes, vit C"],
+  palak_paneer:     ["Palak paneer",           "1 katori (150g)",  230, 8,  13, 16, 3,"Iron + calcium"],
+  baingan_bharta:   ["Baingan bharta",         "1 katori (150g)",  130, 11, 3,  7,  4,"Low cal, antioxidant"],
+  lauki_sabzi:      ["Lauki (bottle gourd)",   "1 katori (150g)",  60,  8,  2,  2,  2,"Kidney-friendly, cool"],
+  bhindi:           ["Bhindi (okra) sabzi",    "1 katori (150g)",  80,  10, 3,  3,  4,"Low GI, diabetic safe"],
+  aloo_matar:       ["Aloo matar sabzi",       "1 katori (150g)",  160, 24, 5,  4,  4,"Potato+peas"],
+  mixed_veg:        ["Mixed vegetable sabzi",  "1 katori (150g)",  100, 12, 3,  4,  4,"Seasonal vegetables"],
+  rice_cooked:      ["Cooked rice (white)",    "1 katori (150g)",  195, 43, 4,  0,  0,"Energy staple"],
+  brown_rice:       ["Brown rice (cooked)",    "1 katori (150g)",  165, 35, 4,  1,  2,"Higher fibre than white"],
+  khichdi:          ["Moong dal khichdi",      "1 bowl (200g)",    200, 32, 9,  4,  4,"Easiest to digest"],
+  curd:             ["Low fat curd (dahi)",    "1 katori (100g)",  61,  5,  4,  3,  0,"Probiotic, calcium"],
+  raita:            ["Cucumber raita",         "1 katori (100g)",  55,  5,  3,  2,  1,"Cooling, digestive"],
+  buttermilk:       ["Chaas (buttermilk)",     "1 glass (250ml)",  50,  4,  2,  2,  0,"Best summer drink"],
+  lassi:            ["Plain lassi (no sugar)", "1 glass (250ml)",  110, 12, 5,  5,  0,"Probiotic, calcium"],
+  salad:            ["Cucumber-tomato salad",  "1 bowl (150g)",    35,  7,  1,  0,  2,"Hydrating, low cal"],
+  green_salad:      ["Green salad with lemon", "1 bowl (150g)",    40,  7,  2,  0,  3,"Vitamins & minerals"],
+  roasted_chana:    ["Roasted chana",          "30g (small bowl)", 110, 17, 7,  2,  4,"Perfect snack, protein"],
+  makhana:          ["Makhana (fox nuts)",     "30g (small bowl)", 107, 20, 4,  1,  0,"Low cal, light snack"],
+  groundnuts:       ["Roasted groundnuts",     "30g",              171, 6,  8,  14, 2,"Healthy fat, protein"],
+  murmura:          ["Murmura (puffed rice)",  "1 cup (30g)",      110, 24, 2,  1,  0,"Light evening snack"],
+  chivda:           ["Low-oil chivda",         "30g",              120, 20, 3,  4,  1,"Poha-based snack"],
+  fruit_bowl:       ["Mixed fruit bowl",       "1 bowl (200g)",    130, 32, 2,  0,  4,"Vitamins & hydration"],
+  coconut_water:    ["Tender coconut water",   "1 glass (250ml)",  60,  15, 1,  0,  0,"Best electrolyte"],
+  nimbu_pani:       ["Nimbu pani (no sugar)",  "1 glass (250ml)",  15,  3,  0,  0,  0,"Vit C, cooling"],
+  green_tea:        ["Green tea",              "1 cup (200ml)",    2,   0,  0,  0,  0,"Antioxidants"],
+  ginger_tea:       ["Adrak chai (low sugar)", "1 cup (150ml)",    40,  5,  2,  1,  0,"Immunity, digestion"],
+  chicken_curry:    ["Chicken curry (lean)",   "1 katori (150g)",  240, 6,  28, 11, 1,"Complete animal protein"],
+  dal_makhani:      ["Dal makhani",            "1 katori (150g)",  220, 22, 10, 9,  6,"Rich, slow-digest"],
+  fish_curry:       ["Fish curry (coastal)",   "1 katori (150g)",  200, 5,  24, 9,  0,"Omega-3, selenium"],
+  egg_curry:        ["Egg curry (2 eggs)",     "1 katori (200g)",  270, 8,  17, 18, 1,"Complete protein"],
+  pongal:           ["Ven pongal",             "1 bowl (200g)",    280, 48, 8,  6,  2,"Tamil breakfast"],
+  pesarattu:        ["Pesarattu",              "2 pieces (120g)",  180, 28, 10, 3,  4,"Andhra green moong"],
+  puttu:            ["Puttu (Kerala)",         "2 pieces (120g)",  230, 46, 5,  2,  2,"Steamed rice cylinder"],
+  appam:            ["Appam with stew",        "2 pieces (150g)",  220, 38, 5,  5,  1,"Kerala fermented"],
+  thepla:           ["Thepla (Gujarat)",       "2 pieces (100g)",  220, 32, 6,  7,  3,"Travels well, balanced"],
+  dhokla:           ["Steamed dhokla",         "2 pieces (100g)",  160, 22, 7,  5,  2,"Fermented, light"],
+  poha_sev:         ["Indori poha",            "1 plate (150g)",   280, 48, 6,  7,  3,"Central Indian style"],
+  sarson_saag:      ["Sarson da saag",         "1 katori (150g)",  130, 10, 6,  7,  5,"Iron & calcium rich"],
+  dal_baati:        ["Dal-baati (½ baati)",    "1 serving (100g)", 310, 42, 9,  11, 4,"Rajasthani, high cal"],
+  litti_chokha:     ["Litti chokha",           "2 litti (140g)",   350, 50, 10, 12, 5,"Bihari, sattu-filled"],
+  idiyappam:        ["Idiyappam",              "2 pieces (100g)",  180, 38, 3,  1,  1,"Kerala rice noodles"],
+  kadhi_chawal:     ["Kadhi chawal",           "1 plate (250g)",   320, 55, 10, 7,  3,"Yoghurt curry+rice"],
+  milk_low_fat:     ["Low fat milk",           "1 glass (200ml)",  100, 10, 6,  3,  0,"Calcium & protein"],
+  walnuts:          ["Walnuts",                "4 halves (15g)",   98,  2,  2,  10, 1,"Omega-3, brain health"],
+  flaxseed:         ["Flaxseed (ground)",      "1 tbsp (10g)",     55,  3,  2,  4,  3,"Omega-3 & fibre"],
+};
+
+// ═══════════════════════════════════════════
+// REGION DATA
+// ═══════════════════════════════════════════
+const REGIONS = {
+  "Punjab":          {w:"Extreme heat (45°C+), dry & dusty",       staple:["makki_roti","sarson_saag","lassi","wheat_roti","dal_tadka"]},
+  "Haryana":         {w:"Very hot dry summers",                     staple:["bajra_roti","wheat_roti","dal_tadka","curd","lassi"]},
+  "Delhi":           {w:"Extreme heat (45°C), smoggy air",          staple:["wheat_roti","dal_tadka","curd","poha","paratha"]},
+  "Uttar Pradesh":   {w:"Hot & humid, heat wave",                   staple:["wheat_roti","dal_tadka","khichdi","curd","rice_cooked"]},
+  "Rajasthan":       {w:"Desert heat (48°C), very dry",             staple:["bajra_roti","dal_baati","khichdi","buttermilk","makhana"]},
+  "Madhya Pradesh":  {w:"Hot dry summers",                          staple:["poha_sev","wheat_roti","dal_tadka","rice_cooked","curd"]},
+  "Chhattisgarh":    {w:"Hot humid",                                staple:["rice_cooked","dal_tadka","mixed_veg","curd","khichdi"]},
+  "Maharashtra":     {w:"Hot humid coast, heavy monsoon inland",    staple:["poha","upma","wheat_roti","dal_tadka","curd","rice_cooked"]},
+  "Gujarat":         {w:"Very hot summers",                         staple:["thepla","dhokla","khichdi","curd","dal_tadka"]},
+  "Goa":             {w:"Tropical heat & humidity",                 staple:["rice_cooked","fish_curry","coconut_water","appam","curd"]},
+  "West Bengal":     {w:"Hot humid, heavy monsoon",                 staple:["rice_cooked","dal_tadka","fish_curry","curd","moong_dal"]},
+  "Bihar":           {w:"Very hot humid",                           staple:["litti_chokha","wheat_roti","dal_tadka","sattu_drink","khichdi"]},
+  "Jharkhand":       {w:"Hot, moderate monsoon",                    staple:["rice_cooked","dal_tadka","mixed_veg","curd"]},
+  "Odisha":          {w:"Hot humid coast",                          staple:["rice_cooked","dal_tadka","fish_curry","khichdi","curd"]},
+  "Assam":           {w:"Pre-monsoon rain, very humid",             staple:["rice_cooked","dal_tadka","fish_curry","curd","mixed_veg"]},
+  "Sikkim":          {w:"Cool hilly, monsoon starting",             staple:["rice_cooked","dal_tadka","mixed_veg","egg_curry","khichdi"]},
+  "Meghalaya":       {w:"Wettest place, heavy rain",                staple:["rice_cooked","dal_tadka","mixed_veg","egg_bhurji","curd"]},
+  "Manipur":         {w:"Moderate, pre-monsoon",                    staple:["rice_cooked","dal_tadka","mixed_veg","curd"]},
+  "Tripura":         {w:"Hot humid, heavy monsoon",                 staple:["rice_cooked","fish_curry","dal_tadka","mixed_veg","curd"]},
+  "Karnataka":       {w:"Moderate, pre-monsoon showers",            staple:["idli","dosa","sambar","upma","ragi_roti"]},
+  "Tamil Nadu":      {w:"Hot humid, northeast monsoon Oct-Dec",     staple:["idli","dosa","sambar","rasam","pongal","rice_cooked"]},
+  "Kerala":          {w:"Heavy monsoon arriving (May-Jun)",         staple:["puttu","appam","idiyappam","fish_curry","coconut_water","rice_cooked"]},
+  "Andhra Pradesh":  {w:"Scorching heat & humid coast",             staple:["pesarattu","rice_cooked","sambar","dal_tadka","curd"]},
+  "Telangana":       {w:"Very hot summers",                         staple:["rice_cooked","dal_tadka","sambar","curd","pesarattu"]},
+  "Puducherry":      {w:"Hot coastal",                              staple:["idli","dosa","sambar","rice_cooked","curd"]},
+  "Himachal Pradesh":{w:"Cool hills, hot in valleys",               staple:["wheat_roti","dal_tadka","rice_cooked","curd","mixed_veg"]},
+  "Uttarakhand":     {w:"Mild hills, hot in plains",                staple:["wheat_roti","dal_tadka","rice_cooked","khichdi","curd"]},
+  "Jammu & Kashmir": {w:"Pleasant valley, cold highlands",          staple:["wheat_roti","dal_tadka","rice_cooked","curd","mixed_veg"]},
+};
+
+// ═══════════════════════════════════════════
+// DISEASE-SPECIFIC RULES
+// ═══════════════════════════════════════════
+const DISEASE_RULES = {
+  "Diabetes (Type 2)":{
+    prefer:["moong_dal","daliya","oats_porridge","ragi_roti","bajra_roti","jowar_roti","brown_rice","bhindi","lauki_sabzi","sprouts","methi_water","roasted_chana","green_tea"],
+    avoid_foods:["rice_cooked","mango","banana","lassi","dal_makhani"],
+    avoid_out:[
+      {name:"White rice biryani",reason:"High glycemic index spikes blood sugar rapidly"},
+      {name:"Maida naan / kulcha",reason:"Refined flour causes quick glucose spike"},
+      {name:"Mango lassi / sweet lassi",reason:"Sugar+fruit+dairy = blood sugar spike"},
+      {name:"Gulab jamun / jalebi",reason:"Deep fried + sugar syrup, very high GI"},
+      {name:"Samosa / kachori",reason:"Maida + deep fried potato, high carb+fat"},
+      {name:"Fruit juices (packaged)",reason:"No fibre, pure fructose spikes insulin"},
+      {name:"Aloo paratha with butter",reason:"High carb + saturated fat combination"},
+      {name:"Cold drinks / soda",reason:"45g sugar per can, worst for diabetes"},
+    ]
+  },
+  "Hypertension":{
+    prefer:["lauki_sabzi","coconut_water","banana","oats_porridge","sprouts","green_tea","daliya","moong_dal","curd"],
+    avoid_foods:["dal_baati","litti_chokha"],
+    avoid_out:[
+      {name:"Pickle (achar) with meals",reason:"Extremely high sodium (>2000mg/serving)"},
+      {name:"Papad / poppadum",reason:"Very high salt, triggers BP spike"},
+      {name:"Salted bhujia / namkeen",reason:"500-800mg sodium per small packet"},
+      {name:"Butter chicken gravy",reason:"High sodium + saturated fat"},
+      {name:"Restaurant dal makhani",reason:"Excess butter + cream + salt"},
+      {name:"Packaged instant noodles",reason:"1 packet = 70% of daily sodium limit"},
+      {name:"Cheese naan / garlic bread",reason:"Sodium + refined carbs + fat"},
+      {name:"Processed cheese slices",reason:"Highest sodium in dairy products"},
+    ]
+  },
+  "Heart Disease":{
+    prefer:["oats_porridge","walnuts","flaxseed","daliya","moong_dal","brown_rice","fish_curry","green_tea","fruits"],
+    avoid_foods:["dal_baati","litti_chokha","dal_makhani"],
+    avoid_out:[
+      {name:"Butter chicken / mutton curry",reason:"Saturated fat raises LDL cholesterol"},
+      {name:"Puri / bhatura (deep fried)",reason:"Trans fat + refined flour, worst for heart"},
+      {name:"Cream-based gravies (korma)",reason:"High saturated fat clogs arteries"},
+      {name:"Dalda / vanaspati dishes",reason:"Trans fats directly harm heart"},
+      {name:"Halwa / ladoo (desi ghee)",reason:"Saturated fat + sugar combination"},
+      {name:"Coconut oil heavy dishes",reason:"High saturated fat raises LDL"},
+      {name:"Full-fat paneer (restaurant)",reason:"High saturated fat, use low-fat instead"},
+      {name:"Fried snacks (samosa, pakoda)",reason:"Trans fat from repeated frying"},
+    ]
+  },
+  "High Cholesterol":{
+    prefer:["oats_porridge","sprouts","daliya","flaxseed","walnuts","moong_dal","bhindi","apple","guava"],
+    avoid_foods:["dal_makhani","egg_bhurji"],
+    avoid_out:[
+      {name:"Full-fat dahi/curd (restaurant)",reason:"High saturated fat raises LDL"},
+      {name:"Paneer dishes with cream",reason:"Saturated fat from cream+paneer"},
+      {name:"Ghee-heavy dal tadka",reason:"Excess ghee raises cholesterol"},
+      {name:"Coconut chutney (excess)",reason:"High saturated fat from coconut"},
+      {name:"Fried foods (any)",reason:"Trans fats from frying oil"},
+      {name:"Red meat dishes",reason:"Saturated fat increases LDL directly"},
+      {name:"Butter naan / paratha",reason:"White flour + butter = cholesterol++"},
+      {name:"Ice cream / kulfi",reason:"High saturated fat dairy"},
+    ]
+  },
+  "PCOD / PCOS":{
+    prefer:["daliya","oats_porridge","bajra_roti","ragi_roti","sprouts","daliya","methi_water","flaxseed","walnuts","moong_chilla","besan_chilla"],
+    avoid_foods:["rice_cooked","banana","mango"],
+    avoid_out:[
+      {name:"Maida-based items (naan, pasta)",reason:"Causes insulin resistance, worsens PCOS"},
+      {name:"Dairy-heavy dishes (restaurant)",reason:"Excess dairy raises androgens"},
+      {name:"Fried food & junk food",reason:"Inflammation worsens hormonal imbalance"},
+      {name:"Sugar-heavy desserts",reason:"Insulin spikes disrupt hormones"},
+      {name:"Soy-heavy items",reason:"Phytoestrogens worsen hormonal issues"},
+      {name:"Packaged fruit juices",reason:"High fructose, no fibre, spikes insulin"},
+      {name:"White bread sandwiches",reason:"Refined carbs = insulin resistance"},
+      {name:"Cold drinks / soft drinks",reason:"Empty calories, worst for PCOS"},
+    ]
+  },
+  "Anemia":{
+    prefer:["palak_paneer","sprouts","rajma","ragi_roti","soaked_raisins","orange","guava","chana_masala","egg_bhurji","boiled_eggs"],
+    avoid_foods:[],
+    avoid_out:[
+      {name:"Tea/coffee with meals",reason:"Tannins block iron absorption by 60-70%"},
+      {name:"Calcium-heavy meals",reason:"Calcium competes with iron absorption"},
+      {name:"Restaurant food with soda",reason:"Phosphates in soda block iron absorption"},
+      {name:"Excess dairy with iron-rich food",reason:"Drink milk 2hrs away from iron foods"},
+      {name:"Packaged biscuits (empty calories)",reason:"No iron, displace nutritious food"},
+      {name:"Alcohol-based drinks",reason:"Alcohol interferes with iron metabolism"},
+      {name:"Fast food (pizza, burger)",reason:"Phytates in refined flour block iron"},
+      {name:"Spinach eaten with dairy",reason:"Oxalate+calcium blocks iron - eat separately"},
+    ]
+  },
+  "Kidney Disease":{
+    prefer:["rice_cooked","wheat_roti","apple","lauki_sabzi","curd","egg_bhurji"],
+    avoid_foods:["rajma","chana_masala","sprouts","palak_paneer","soaked_raisins","banana"],
+    avoid_out:[
+      {name:"Rajma / chole (restaurant)",reason:"Very high potassium & phosphorus"},
+      {name:"Spinach / palak dishes",reason:"High oxalate damages kidneys"},
+      {name:"Packaged namkeen / chips",reason:"Very high sodium harms kidneys"},
+      {name:"Dark cola / cold drinks",reason:"Phosphoric acid damages kidneys"},
+      {name:"Tomato-heavy gravies",reason:"High potassium, limit for kidney patients"},
+      {name:"Banana / dates",reason:"Very high potassium, dangerous for kidneys"},
+      {name:"Nuts & seeds (excess)",reason:"High phosphorus in kidney disease"},
+      {name:"Pickle / papad",reason:"Extreme sodium load on kidneys"},
+    ]
+  },
+  "Acidity / GERD":{
+    prefer:["daliya","khichdi","banana","curd","coconut_water","oats_porridge","lauki_sabzi"],
+    avoid_foods:["dal_baati","litti_chokha"],
+    avoid_out:[
+      {name:"Spicy curries (restaurant)",reason:"Chilli irritates esophagus lining"},
+      {name:"Tea / coffee on empty stomach",reason:"Stimulates excess acid production"},
+      {name:"Fried street food",reason:"High fat delays gastric emptying, causes reflux"},
+      {name:"Tomato-based gravies",reason:"High acidity triggers heartburn"},
+      {name:"Chole bhature",reason:"Fried + spicy + acidic = worst combo for GERD"},
+      {name:"Mint chutney (excess)",reason:"Mint relaxes LES muscle, worsens reflux"},
+      {name:"Carbonated drinks",reason:"CO2 gas distends stomach, pushes acid up"},
+      {name:"Late-night heavy meals",reason:"Lying down with full stomach = acid reflux"},
+    ]
+  },
+  "Gluten Sensitivity":{
+    prefer:["rice_cooked","poha","idli","dosa","ragi_roti","bajra_roti","jowar_roti","khichdi","sambar"],
+    avoid_foods:["wheat_roti","paratha","missi_roti","daliya","upma"],
+    avoid_out:[
+      {name:"Roti / naan / paratha / bread",reason:"All wheat-based — contain gluten"},
+      {name:"Rava (sooji) items — upma, halwa",reason:"Semolina is wheat, triggers reaction"},
+      {name:"Packaged sauces & gravies",reason:"Hidden gluten as thickener"},
+      {name:"Seitan / wheat protein items",reason:"Pure gluten — absolutely avoid"},
+      {name:"Barley drinks (sattu if wheat-mixed)",reason:"Barley contains gluten"},
+      {name:"Most biscuits & cookies",reason:"Made from maida/atta — gluten source"},
+      {name:"Packaged fried snacks",reason:"Often use wheat flour as coating"},
+      {name:"Soy sauce in fusion dishes",reason:"Often contains wheat — check label"},
+    ]
+  },
+  "Thyroid (Hypo)":{
+    prefer:["daliya","oats_porridge","eggs","chicken_curry","sprouts","flaxseed","walnuts"],
+    avoid_foods:[],
+    avoid_out:[
+      {name:"Raw cabbage / cauliflower salad",reason:"Goitrogens block thyroid hormone"},
+      {name:"Soy-based dishes",reason:"Soy isoflavones interfere with T4 absorption"},
+      {name:"Excess millets (bajra/jowar)",reason:"Goitrogenic in very large amounts"},
+      {name:"Gluten-heavy meals",reason:"Gluten linked to autoimmune thyroid"},
+      {name:"Packaged processed food",reason:"Fluoride & chlorine in additives disrupt thyroid"},
+      {name:"Fatty restaurant food",reason:"Slows metabolism further in hypothyroid"},
+      {name:"Coffee with thyroid medication",reason:"Blocks levothyroxine absorption"},
+      {name:"High-fibre supplement bars",reason:"Excess fibre blocks thyroid medication"},
+    ]
+  },
+  "IBS / Gut Issues":{
+    prefer:["khichdi","oats_porridge","banana","curd","daliya","poha","moong_dal","rice_cooked"],
+    avoid_foods:["rajma","chana_masala","sprouts"],
+    avoid_out:[
+      {name:"Spicy street food",reason:"Capsaicin triggers IBS flare-ups"},
+      {name:"Onion-garlic heavy curries",reason:"High FODMAP, ferments in colon"},
+      {name:"Wheat-heavy meals",reason:"Gluten can trigger IBS in sensitive people"},
+      {name:"Dairy-heavy dishes",reason:"Lactose ferments and causes bloating/cramps"},
+      {name:"Carbonated drinks",reason:"Gas causes bloating and cramping"},
+      {name:"Fried oily food",reason:"Fat triggers intestinal contractions"},
+      {name:"Artificial sweeteners",reason:"Sorbitol/mannitol cause diarrhea"},
+      {name:"Caffeinated drinks",reason:"Stimulates gut motility, worsens diarrhea-IBS"},
+    ]
+  },
+  "Lactose Intolerance":{
+    prefer:["daliya","rice_cooked","moong_dal","sprouts","ragi_roti","coconut_water"],
+    avoid_foods:["curd","raita","lassi","milk_low_fat","turmeric_milk"],
+    avoid_out:[
+      {name:"Paneer dishes",reason:"Made from milk — high lactose"},
+      {name:"Kheer / rabri / kulfi",reason:"Milk-based desserts cause bloating"},
+      {name:"Cream-based gravies",reason:"Heavy cream = high lactose"},
+      {name:"Raita / dahi based sides",reason:"Curd, though lower lactose, still triggers"},
+      {name:"Milkshakes / lassi",reason:"Large amounts of milk cause symptoms"},
+      {name:"Cheese naan",reason:"Cheese has concentrated lactose"},
+      {name:"Flavoured yoghurt (packaged)",reason:"Added sugar + lactose = double issue"},
+      {name:"Butter-heavy dal / rice",reason:"Butter contains lactose traces"},
+    ]
+  },
+};
+
+// ═══════════════════════════════════════════
+// HARMFUL INGREDIENTS DATABASE
+// ═══════════════════════════════════════════
+const HARMFUL_INGR = {
+  "maida":         {level:"danger", reason:"Refined wheat flour — no fibre, high GI, causes blood sugar spikes, inflammatory"},
+  "refined wheat flour": {level:"danger", reason:"Same as maida — strips fibre and nutrients during processing"},
+  "palmolein":     {level:"danger", reason:"Palm oil — high saturated fat, raises LDL cholesterol, inflammatory"},
+  "palm oil":      {level:"danger", reason:"High saturated fat (50%), linked to heart disease"},
+  "vanaspati":     {level:"danger", reason:"Partially hydrogenated oil — high trans fat, banned in many countries"},
+  "hydrogenated":  {level:"danger", reason:"Trans fat — raises LDL, lowers HDL, worst fat for heart health"},
+  "ins 621":       {level:"danger", reason:"MSG (Monosodium Glutamate) — causes headaches, water retention"},
+  "ins 627":       {level:"danger", reason:"Disodium Guanylate — flavour enhancer, harmful with gout, kidney issues"},
+  "ins 631":       {level:"danger", reason:"Disodium Inosinate — derived from meat/fish, flavour booster"},
+  "ins 102":       {level:"danger", reason:"Tartrazine (yellow dye) — linked to hyperactivity, allergies"},
+  "ins 110":       {level:"danger", reason:"Sunset Yellow — banned in Norway/Finland, linked to allergies"},
+  "ins 129":       {level:"danger", reason:"Allura Red — artificial red dye, linked to hyperactivity in children"},
+  "ins 211":       {level:"danger", reason:"Sodium Benzoate — preservative, forms benzene (carcinogen) with Vit C"},
+  "ins 220":       {level:"danger", reason:"Sulphur Dioxide — preservative, triggers asthma attacks"},
+  "ins 951":       {level:"danger", reason:"Aspartame — artificial sweetener, controversial, neurological concerns"},
+  "ins 950":       {level:"warn",   reason:"Acesulfame-K — 200x sweeter than sugar, may affect gut bacteria"},
+  "ins 954":       {level:"warn",   reason:"Saccharin — oldest artificial sweetener, bladder cancer in lab animals"},
+  "high fructose": {level:"danger", reason:"High Fructose Corn Syrup — linked to obesity, fatty liver"},
+  "corn syrup":    {level:"warn",   reason:"Refined sugar alternative — raises triglycerides"},
+  "sugar":         {level:"warn",   reason:"Excess added sugar — empty calories, linked to obesity, diabetes"},
+  "salt":          {level:"warn",   reason:"Check quantity — excess sodium causes hypertension"},
+  "sodium":        {level:"warn",   reason:"High sodium raises blood pressure — aim <2300mg/day"},
+  "maltodextrin":  {level:"warn",   reason:"Highly processed starch — very high GI, spikes blood sugar fast"},
+  "carrageenan":   {level:"warn",   reason:"Seaweed extract thickener — linked to gut inflammation"},
+  "yeast extract": {level:"warn",   reason:"Contains natural MSG — hidden glutamate source"},
+  "tbhq":          {level:"danger", reason:"TBHQ preservative — linked to DNA damage at high doses"},
+  "bha":           {level:"warn",   reason:"Butylated Hydroxyanisole — possible carcinogen"},
+  "bht":           {level:"warn",   reason:"Butylated Hydroxytoluene — endocrine disruptor"},
+  "ins 471":       {level:"warn",   reason:"Mono-diglycerides — emulsifier from partially hydrogenated fats"},
+  "emulsifier":    {level:"warn",   reason:"Emulsifiers (if INS 471, 472, 476) may disrupt gut microbiome"},
+  "cocoa butter substitute": {level:"warn", reason:"Often uses palm kernel oil — high saturated fat"},
+  "permitted natural colour": {level:"warn", reason:"Vague labeling — check INS number for specific risk"},
+  "artificial flavour": {level:"warn", reason:"Unspecified synthetic chemicals — no nutritional benefit"},
+  "fortified with": {level:"good",  reason:"Added vitamins/minerals — positive nutritional addition"},
+  "whole wheat":   {level:"good",   reason:"Better than refined flour — retains fibre and nutrients"},
+  "oats":          {level:"good",   reason:"High beta-glucan fibre — lowers cholesterol, good for heart"},
+  "multigrain":    {level:"good",   reason:"Multiple grains provide varied nutrients — better than single grain"},
+  "no added sugar":{level:"good",   reason:"Lower glycemic impact — good for diabetics"},
+  "ragi":          {level:"good",   reason:"Finger millet — highest calcium in cereals, good for bones"},
+  "bajra":         {level:"good",   reason:"Pearl millet — iron-rich, gluten-free, heart healthy"},
+  "flaxseed":      {level:"good",   reason:"Rich in Omega-3 ALA and fibre — heart and gut health"},
+  "quinoa":        {level:"good",   reason:"Complete protein with all essential amino acids"},
+  "sunflower oil": {level:"good",   reason:"Better than palm oil — high in Vit E, polyunsaturated"},
+  "mustard oil":   {level:"good",   reason:"Traditional Indian oil — high in MUFA, good for heart in moderation"},
+};
+
+// ═══════════════════════════════════════════
+// UTILITY FUNCTIONS
+// ═══════════════════════════════════════════
+function updateBMI(){
+  const h=parseFloat(document.getElementById('height').value),
+        w=parseFloat(document.getElementById('weight').value);
+  if(!h||!w||h<100||w<20){document.getElementById('bmi-display').classList.add('hidden');return}
+  const bmi=(w/((h/100)**2)).toFixed(1);
+  document.getElementById('bmi-display').classList.remove('hidden');
+  document.getElementById('bmi-num').textContent=bmi;
+  const badge=document.getElementById('bmi-badge'),bar=document.getElementById('bmi-bar');
+  let pct,bg,label,bs;
+  if(bmi<18.5)     {pct=18;bg='#3B82F6';label='Underweight';bs='background:#DBEAFE;color:#1E40AF'}
+  else if(bmi<25)  {pct=42;bg='#22C55E';label='Normal ✓';  bs='background:#DCFCE7;color:#166534'}
+  else if(bmi<30)  {pct=65;bg='#F59E0B';label='Overweight'; bs='background:#FEF3C7;color:#92400E'}
+  else             {pct=85;bg='#EF4444';label='Obese';       bs='background:#FEE2E2;color:#991B1B'}
+  badge.textContent=label;
+  badge.style.cssText=bs+';padding:3px 10px;border-radius:20px;font-size:12px;font-weight:500';
+  bar.style.width=pct+'%';bar.style.background=bg;
+}
+
+function updateRNote(){
+  const r=document.getElementById('region').value,
+        n=document.getElementById('rnote'),
+        i=REGIONS[r];
+  if(i){n.classList.remove('hidden');n.innerHTML='<b>Weather now:</b> '+i.w}
+  else n.classList.add('hidden');
+}
+
+function solo(el,grpId){
+  document.querySelectorAll('#'+grpId+' .tag').forEach(t=>{t.classList.remove('sel')});
+  el.classList.add('sel');
+}
+
+function multi(el){
+  if(el.textContent==='None'){
+    document.querySelectorAll('#dis-grp .tag').forEach(t=>t.classList.remove('dsel'));
+    el.classList.toggle('dsel');
+  } else {
+    document.querySelector('#dis-grp .tag:last-child').classList.remove('dsel');
+    el.classList.toggle('dsel');
+  }
+}
+
+function getSel(grpId){return Array.from(document.querySelectorAll('#'+grpId+' .tag.sel')).map(t=>t.textContent)}
+function getDis(){return Array.from(document.querySelectorAll('#dis-grp .tag.dsel')).map(t=>t.textContent)}
+
+function calcTDEE(age,gender,h,w,activity){
+  const bmr=gender==='Female'?447.593+(9.247*w)+(3.098*h)-(4.330*age):88.362+(13.397*w)+(4.799*h)-(5.677*age);
+  const m={'Sedentary (desk job)':1.2,'Lightly active':1.375,'Moderately active':1.55,'Very active':1.725,'Athlete':1.9};
+  return Math.round(bmr*(m[activity]||1.55));
+}
+
+function f(key){return FOODS[key]||FOODS.wheat_roti}
+function foodItem(key){
+  const d=f(key);
+  return {name:d[0],portion:d[1],calories:d[2],carbs_g:d[3],protein_g:d[4],fat_g:d[5],fiber_g:d[6],note:d[7]};
+}
+function sumMeal(items){
+  return items.reduce((a,i)=>({kcal:a.kcal+i.calories,c:a.c+i.carbs_g,p:a.p+i.protein_g,f:a.f+i.fat_g,fi:a.fi+i.fiber_g}),{kcal:0,c:0,p:0,f:0,fi:0});
+}
+
+// ═══════════════════════════════════════════
+// MEAL PLAN BUILDER
+// ═══════════════════════════════════════════
+function buildMealPlan(age,gender,h,w,bmi,region,diseases,diet,activity,goal){
+  const tdee=calcTDEE(age,gender,h,w,activity);
+  const targetKcal=goal==='Lose weight'?tdee-400:goal==='Gain muscle'?tdee+300:tdee;
+  const ri=REGIONS[region]||{w:'Hot summer',staple:['wheat_roti','dal_tadka','curd','rice_cooked','khichdi']};
+  const isVeg=diet==='Vegetarian'||diet==='Vegan'||diet==='Jain';
+  const isVegan=diet==='Vegan';
+  const isGF=diseases.includes('Gluten Sensitivity');
+  const isLI=diseases.includes('Lactose Intolerance');
+  const isKidney=diseases.includes('Kidney Disease');
+  const isDiabetic=diseases.includes('Diabetes (Type 2)')||diseases.includes('Diabetes (Type 1)');
+  const isHBP=diseases.includes('Hypertension');
+  const isAnemia=diseases.includes('Anemia');
+  const isGERD=diseases.includes('Acidity / GERD');
+  const isIBS=diseases.includes('IBS / Gut Issues');
+  const isHC=diseases.includes('High Cholesterol');
+  const isPCOS=diseases.includes('PCOD / PCOS');
+
+  // prefer low-GI if diabetic/PCOS, avoid high-protein if kidney
+  const rotis=isGF?['ragi_roti','bajra_roti','jowar_roti']:['wheat_roti','missi_roti','ragi_roti'];
+  const morningDrink=isVegan?'jeera_water':isDiabetic?'methi_water':isGERD?'warm_water':'warm_water';
+  const morningNuts=isKidney?null:isVegan?'walnuts':'soaked_almonds';
+  const morningSoaked=isKidney?null:isAnemia?'soaked_raisins':null;
+
+  // EARLY MORNING
+  const emItems=[foodItem(morningDrink)];
+  if(morningNuts) emItems.push(foodItem(morningNuts));
+  if(morningSoaked) emItems.push(foodItem(morningSoaked));
+  if(isDiabetic) emItems.push(foodItem('flaxseed'));
+
+  // BREAKFAST — region-specific
+  let bfItems=[];
+  const southStates=['Karnataka','Tamil Nadu','Kerala','Andhra Pradesh','Telangana','Puducherry'];
+  const isSouth=southStates.includes(region);
+  if(isSouth){
+    if(region==='Kerala') bfItems=[foodItem('puttu'),foodItem('sambar')];
+    else if(isDiabetic) bfItems=[foodItem('moong_chilla'),foodItem('sambar')];
+    else bfItems=[foodItem('idli'),foodItem('sambar')];
+  } else if(region==='Gujarat'){
+    bfItems=[foodItem('thepla'),foodItem('curd')];
+    if(isVegan) bfItems=[foodItem('dhokla'),foodItem('green_tea')];
+  } else if(region==='Maharashtra'){
+    bfItems=[foodItem('poha'),isVegan?foodItem('green_tea'):foodItem('ginger_tea')];
+  } else if(isDiabetic||isPCOS){
+    bfItems=[foodItem('besan_chilla'),foodItem('green_tea')];
+  } else if(isGF){
+    bfItems=[foodItem('poha'),foodItem(isVegan?'green_tea':'ginger_tea')];
+  } else {
+    bfItems=[foodItem('daliya'),isVegan?foodItem('green_tea'):foodItem('ginger_tea')];
+  }
+  if(!isVegan&&!isLI&&!isSouth) bfItems.push(foodItem('curd'));
+  if(isAnemia) bfItems.push(foodItem('orange'));
+
+  // MID MORNING
+  let mmItems=[];
+  if(isKidney) mmItems=[foodItem('apple')];
+  else if(isDiabetic) mmItems=[foodItem('guava'),foodItem('green_tea')];
+  else if(isGERD) mmItems=[foodItem('banana')];
+  else mmItems=[foodItem('fruit_bowl')];
+  mmItems.push(foodItem(isGERD?'coconut_water':'nimbu_pani'));
+
+  // LUNCH
+  let lunchItems=[];
+  const useRice=isSouth||region==='West Bengal'||region==='Odisha'||region==='Assam'||region==='Bihar';
+  const grainKey=isDiabetic?(useRice?'brown_rice':'bajra_roti'):isGF?(useRice?'rice_cooked':'ragi_roti'):(useRice?'rice_cooked':rotis[0]);
+  lunchItems.push(foodItem(grainKey));
+  if(!useRice) lunchItems.push(foodItem(rotis[1]||'wheat_roti'));
+
+  // dal
+  const dalKey=isKidney?'moong_dal':isPCOS||isDiabetic?'moong_dal':'dal_tadka';
+  lunchItems.push(foodItem(dalKey));
+
+  // sabzi
+  const sabziKey=isKidney?'lauki_sabzi':isHBP?'bhindi':isGERD?'lauki_sabzi':isHC?'palak_paneer':'mixed_veg';
+  lunchItems.push(foodItem(sabziKey));
+
+  // protein
+  if(!isVeg&&!isKidney) lunchItems.push(foodItem('chicken_curry'));
+  else if(!isVegan&&!isLI) lunchItems.push(foodItem('paneer_bhurji'));
+  else lunchItems.push(foodItem('chana_masala'));
+
+  // curd/raita
+  if(!isVegan&&!isLI) lunchItems.push(foodItem('raita'));
+  else lunchItems.push(foodItem('salad'));
+
+  if(isSouth) lunchItems.push(foodItem('rasam'));
+
+  // EVENING SNACK
+  let esItems=[];
+  if(isDiabetic) esItems=[foodItem('roasted_chana'),foodItem('green_tea')];
+  else if(isGERD) esItems=[foodItem('makhana'),foodItem('coconut_water')];
+  else if(isHBP) esItems=[foodItem('coconut_water'),foodItem('sprouts')];
+  else esItems=[foodItem('makhana'),foodItem('buttermilk')];
+  if(isAnemia) esItems=[foodItem('sprouts'),foodItem('nimbu_pani')];
+
+  // DINNER
+  let dinItems=[];
+  const dinGrain=isDiabetic?'bajra_roti':isGF?'ragi_roti':'wheat_roti';
+  dinItems.push(foodItem(dinGrain));
+  dinItems.push(foodItem('wheat_roti'));
+  dinItems.push(foodItem(isKidney?'lauki_sabzi':isGERD?'lauki_sabzi':'palak_paneer'));
+  dinItems.push(foodItem(isKidney?'moong_dal':'khichdi'));
+  if(!isVegan&&!isLI) dinItems.push(foodItem('raita'));
+  else dinItems.push(foodItem('green_salad'));
+
+  // BEDTIME
+  let btItems=[];
+  if(!isVegan&&!isLI) btItems=[foodItem('turmeric_milk')];
+  else btItems=[foodItem('warm_water'),foodItem('walnuts')];
+  if(isDiabetic) btItems=[foodItem('warm_water'),foodItem('flaxseed')];
+
+  const emSum=sumMeal(emItems),bfSum=sumMeal(bfItems),mmSum=sumMeal(mmItems);
+  const luSum=sumMeal(lunchItems),esSum=sumMeal(esItems),diSum=sumMeal(dinItems),btSum=sumMeal(btItems);
+  const totalKcal=emSum.kcal+bfSum.kcal+mmSum.kcal+luSum.kcal+esSum.kcal+diSum.kcal+btSum.kcal;
+
+  // macros
+  const carbs_g=isDiabetic||isPCOS?Math.round(targetKcal*0.40/4):Math.round(targetKcal*0.50/4);
+  const protein_g=Math.round(targetKcal*0.25/4);
+  const fat_g=Math.round(targetKcal*0.25/9);
+  const fiber_g=isDiabetic?30:25;
+
+  // avoids — aggregate from all disease rules
+  let avoidOut=[], safeOut=[];
+  const hasDisease=diseases.filter(d=>d!=='None');
+  if(hasDisease.length){
+    hasDisease.forEach(d=>{
+      const rule=DISEASE_RULES[d];
+      if(rule) avoidOut.push(...rule.avoid_out);
+    });
+    // dedupe by name
+    const seen=new Set();
+    avoidOut=avoidOut.filter(a=>{if(seen.has(a.name))return false;seen.add(a.name);return true}).slice(0,8);
+  } else {
+    avoidOut=[
+      {name:"Fried street food (samosa, pakoda)",reason:"Trans fat & excess calories"},
+      {name:"Maida-based items (naan, bhatura)",reason:"Refined flour, no nutritional value"},
+      {name:"Sweetened beverages & cold drinks",reason:"45g sugar per can, empty calories"},
+      {name:"Restaurant heavy gravies (butter chicken)",reason:"Excess cream, butter, salt"},
+      {name:"Packaged instant noodles",reason:"Maida + high sodium + preservatives"},
+      {name:"Junk food (chips, biscuits)",reason:"Palm oil, excess salt, artificial flavours"},
+      {name:"Sweets & mithai (jalebi, halwa)",reason:"High sugar + ghee, no nutrients"},
+      {name:"Processed meats (sausage, salami)",reason:"Nitrates, high sodium, carcinogens"},
+    ];
+  }
+  safeOut=[
+    {name:"Dal tadka + roti (any dhaba)",tip:"Ask for less ghee — wholesome & balanced"},
+    {name:"Idli sambar",tip:"Steamed, fermented — best outside food choice"},
+    {name:"Grilled/tandoor items",tip:"Better than fried — no batter coating"},
+    {name:"Khichdi",tip:"Dal + rice — complete protein, easy to digest"},
+    {name:"Steamed dhokla",tip:"Fermented, low fat, good protein"},
+    {name:"Curd rice (South India)",tip:"Probiotic + cooling — best in heat"},
+  ];
+
+  const meals=[
+    {id:"earlymorning",label:"Early Morning",time:"6:00–7:00 AM",emoji:"🌅",title:"Wake-up Ritual",items:emItems,sum:emSum,tip:"Drink warm water before anything else. Helps flush toxins and kickstarts metabolism."},
+    {id:"breakfast",label:"Breakfast",time:"8:00–9:00 AM",emoji:"🍽️",title:region+" Style Breakfast",items:bfItems,sum:bfSum,tip:isDiabetic?"Protein-first breakfast keeps blood sugar stable till lunch.":isGERD?"Eat slowly, sit upright 30 min after eating.":"Eat within 1 hour of waking for best metabolism."},
+    {id:"midmorning",label:"Mid Morning",time:"10:30–11:00 AM",emoji:"🌿",title:"Fruit & Hydration",items:mmItems,sum:mmSum,tip:"Stay hydrated — in this "+ri.w.split(',')[0]+" weather you need extra fluids."},
+    {id:"lunch",label:"Lunch",time:"1:00–2:00 PM",emoji:"☀️",title:"Full "+region+" Thali",items:lunchItems,sum:luSum,tip:isKidney?"Avoid adding extra salt. Eat slowly and chew well.":"Biggest meal of the day — when digestion is strongest (12–2 PM)."},
+    {id:"eveningsnack",label:"Evening Snack",time:"4:30–5:00 PM",emoji:"🍵",title:"Light Snack",items:esItems,sum:esSum,tip:"Keep this snack light. Avoid fried items even at home."},
+    {id:"dinner",label:"Dinner",time:"7:30–8:30 PM",emoji:"🌙",title:"Light Dinner",items:dinItems,sum:diSum,tip:"Eat dinner 2–3 hours before sleep. Keep it lighter than lunch."},
+    {id:"bedtime",label:"Bedtime",time:"9:30–10:00 PM",emoji:"🌛",title:"Bedtime Ritual",items:btItems,sum:btSum,tip:"No heavy food post 9 PM. This small ritual aids sleep and recovery."},
+  ];
+
+  const keyNutrients=[];
+  if(isAnemia) keyNutrients.push({nutrient:"Iron",why:"Critical for anemia recovery",sources:"Palak, rajma, ragi, soaked raisins"});
+  if(isDiabetic) keyNutrients.push({nutrient:"Chromium & Fibre",why:"Improves insulin sensitivity",sources:"Bajra, methi seeds, broccoli, oats"});
+  if(isHBP||isHC) keyNutrients.push({nutrient:"Potassium",why:"Lowers blood pressure naturally",sources:"Banana, coconut water, palak, rajma"});
+  if(isPCOS) keyNutrients.push({nutrient:"Magnesium",why:"Reduces insulin resistance in PCOS",sources:"Dark chocolate, pumpkin seeds, almonds"});
+  keyNutrients.push({nutrient:"Vitamin D",why:"Most Indians are deficient",sources:"Sunlight (8–10 AM), egg yolk, fortified milk"});
+  keyNutrients.push({nutrient:"Vitamin B12",why:"Deficiency very common in vegetarians",sources:isVegan?"Fortified foods, nutritional yeast":"Curd, paneer, eggs, milk"});
+  keyNutrients.push({nutrient:"Omega-3",why:"Anti-inflammatory, heart & brain health",sources:isVeg?"Flaxseed, walnuts, hemp seeds":"Fish (rohu, salmon), flaxseed"});
+
+  return {targetKcal,totalKcal,carbs_g,protein_g,fat_g,fiber_g,ri,meals,avoidOut,safeOut,keyNutrients};
+}
+
+// ═══════════════════════════════════════════
+// RENDER FUNCTIONS
+// ═══════════════════════════════════════════
+let userProfile={};
+
+function bar(lbl,val,max,color){
+  const pct=Math.min(100,max>0?Math.round(val/max*100):0);
+  return'<div class="brow"><span class="blbl">'+lbl+'</span><div class="btrack"><div class="bfill" style="width:'+pct+'%;background:'+color+'"></div></div><span class="bnum">'+val+'g</span></div>';
+}
+
+function renderMeal(meal,targets){
+  const s=meal.sum;
+  let html='<div class="mb">';
+  html+='<div class="mh"><span style="font-size:21px;flex-shrink:0">'+meal.emoji+'</span>'
+    +'<div><div class="mtime">'+meal.label+' · '+meal.time+'</div><div class="mname">'+meal.title+'</div></div>'
+    +'<div class="mpills">'
+    +'<span class="mp pk">'+s.kcal+' kcal</span>'
+    +'<span class="mp pc">C:'+s.c+'g</span>'
+    +'<span class="mp pp">P:'+s.p+'g</span>'
+    +'<span class="mp pf">F:'+s.f+'g</span>'
+    +'</div></div>';
+  html+='<div class="mbody"><table class="itbl"><thead><tr>'
+    +'<th>Food Item</th><th>Portion</th><th>Kcal</th><th>Carbs</th><th>Protein</th><th>Fat</th><th>Fibre</th>'
+    +'</tr></thead><tbody>';
+  for(const it of meal.items){
+    html+='<tr><td>'+it.name+(it.note?'<div style="font-size:11px;color:var(--gray);font-weight:400;margin-top:1px">'+it.note+'</div>':'')+'</td>'
+      +'<td class="dim">'+it.portion+'</td>'
+      +'<td class="num">'+it.calories+'</td>'
+      +'<td class="dim">'+it.carbs_g+'g</td>'
+      +'<td class="dim">'+it.protein_g+'g</td>'
+      +'<td class="dim">'+it.fat_g+'g</td>'
+      +'<td class="dim">'+it.fiber_g+'g</td>'
+      +'</tr>';
+  }
+  html+='</tbody></table>';
+  html+='<div class="bars">'+bar('Carbs',s.c,targets.carbs_g,'#3B82F6')+bar('Protein',s.p,targets.protein_g,'#22C55E')+bar('Fat',s.f,targets.fat_g,'#EF4444')+'</div>';
+  if(meal.tip) html+='<div class="tip">💡 '+meal.tip+'</div>';
+  html+='</div></div>';
+  return html;
+}
+
+function generatePlan(){
+  const age=parseInt(document.getElementById('age').value);
+  const gender=document.getElementById('gender').value;
+  const h=parseFloat(document.getElementById('height').value);
+  const w=parseFloat(document.getElementById('weight').value);
+  const region=document.getElementById('region').value;
+  if(!age||!gender||!h||!w||!region){alert('Please fill Age, Gender, Height, Weight & Region.');return}
+  const activity=getSel('act-grp')[0]||'Moderately active';
+  const diet=getSel('diet-grp')[0]||'Vegetarian';
+  const goal=getSel('goal-grp')[0]||'Stay healthy';
+  const diseases=getDis().filter(d=>d!=='None');
+  const bmi=(w/((h/100)**2)).toFixed(1);
+  userProfile={age,gender,h,w,bmi,region,activity,diet,goal,diseases};
+
+  const plan=buildMealPlan(age,gender,h,w,bmi,region,diseases,diet,activity,goal);
+
+  let html='<div class="pb">'
+    +'<div><div class="pbl">Region</div><div class="pbv">'+region+'</div></div>'
+    +'<div><div class="pbl">BMI</div><div class="pbv">'+bmi+'</div></div>'
+    +'<div><div class="pbl">Target</div><div class="pbv">'+plan.targetKcal+' kcal</div></div>'
+    +'<div><div class="pbl">Weather</div><div class="pbv" style="font-size:13px;font-weight:400">'+(plan.ri.w.split(',')[0])+'</div></div>'
+    +'</div>';
+
+  if(diseases.length)
+    html+='<div class="card" style="background:var(--spice-light);border-color:rgba(139,38,53,.2);margin-bottom:13px">'
+      +'<p style="font-size:13px;color:var(--spice)">🩺 <b>Conditions adapted for:</b> '+diseases.join(' · ')+'</p></div>';
+
+  html+='<div class="mstrip">'
+    +'<div class="mc"><div class="mc-v" style="color:var(--saffron)">'+plan.targetKcal+'</div><div class="mc-u">kcal</div><div class="mc-l">Calories</div></div>'
+    +'<div class="mc"><div class="mc-v" style="color:#1E40AF">'+plan.carbs_g+'g</div><div class="mc-l">Carbs</div></div>'
+    +'<div class="mc"><div class="mc-v" style="color:#166534">'+plan.protein_g+'g</div><div class="mc-l">Protein</div></div>'
+    +'<div class="mc"><div class="mc-v" style="color:#991B1B">'+plan.fat_g+'g</div><div class="mc-l">Fat</div></div>'
+    +'<div class="mc"><div class="mc-v" style="color:#5B21B6">'+plan.fiber_g+'g</div><div class="mc-l">Fibre</div></div>'
+    +'</div>';
+
+  for(const meal of plan.meals) html+=renderMeal(meal,plan);
+
+  html+='<div class="card"><div class="ctitle">🌿 Key Nutrients to Focus On</div>';
+  for(const n of plan.keyNutrients)
+    html+='<div style="padding:10px 12px;background:var(--forest-light);border-radius:9px;margin-bottom:8px;border:1px solid rgba(45,106,79,.15)">'
+      +'<div style="font-weight:500;color:var(--forest);font-size:14px">'+n.nutrient+'</div>'
+      +'<div style="font-size:12px;color:var(--gray);margin-top:2px">'+n.why+' · <b style="color:var(--dark)">Sources:</b> '+n.sources+'</div>'
+      +'</div>';
+  html+='</div>';
+
+  html+='<button class="ghost" style="width:100%;margin-top:4px" onclick="resetPlan()">← Edit Profile & Regenerate</button>';
+
+  document.getElementById('form-sec').classList.add('hidden');
+  document.getElementById('result-sec').classList.remove('hidden');
+  document.getElementById('result-sec').innerHTML=html;
+
+  // fill avoid tab
+  renderAvoidTab(plan);
+}
+
+function renderAvoidTab(plan){
+  const p=userProfile;
+  let html='<div class="pb">'
+    +'<div><div class="pbl">Profile</div><div class="pbv">'+p.region+' · BMI '+p.bmi+'</div></div>'
+    +'<div><div class="pbl">Conditions</div><div class="pbv" style="font-size:13px">'+( p.diseases.length?p.diseases.slice(0,3).join(', '):'None' )+'</div></div>'
+    +'</div>';
+
+  html+='<div class="card"><div class="ctitle">🚫 Avoid When Eating Out</div><div class="avoid-grid">';
+  for(const a of plan.avoidOut)
+    html+='<div class="avitem"><div class="avname">✗ '+a.name+'</div><div class="avreason">'+a.reason+'</div></div>';
+  html+='</div></div>';
+
+  html+='<div class="card"><div class="ctitle">✅ Safe Choices When Eating Out</div>';
+  for(const s of plan.safeOut)
+    html+='<div class="safeitem"><b>✓ '+s.name+'</b>'+s.tip+'</div>';
+  html+='</div>';
+
+  document.getElementById('avoid-content').innerHTML=html;
+  document.getElementById('avoid-prompt').classList.add('hidden');
+}
+
+function resetPlan(){
+  document.getElementById('result-sec').classList.add('hidden');
+  document.getElementById('form-sec').classList.remove('hidden');
+}
+
+function switchTab(name){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tc').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  document.getElementById('content-'+name).classList.add('active');
+}
+
+// ═══════════════════════════════════════════
+// INGREDIENT CHECKER
+// ═══════════════════════════════════════════
+function checkIngr(){
+  const prod=document.getElementById('prod-name').value.trim();
+  const ingText=document.getElementById('ing-input').value.trim().toLowerCase();
+  if(!ingText){alert('Please paste the ingredients list.');return}
+
+  let dangerItems=[],warnItems=[],goodItems=[];
+  for(const [key,val] of Object.entries(HARMFUL_INGR)){
+    if(ingText.includes(key)){
+      if(val.level==='danger') dangerItems.push({name:key,reason:val.reason});
+      else if(val.level==='warn') warnItems.push({name:key,reason:val.reason});
+      else goodItems.push({name:key,reason:val.reason});
+    }
+  }
+
+  // personalise for user's conditions
+  const dis=userProfile.diseases||[];
+  if(dis.includes('Diabetes (Type 2)')&&ingText.includes('sugar')&&!dangerItems.find(d=>d.name==='sugar'))
+    dangerItems.push({name:'sugar (diabetic warning)',reason:'Any added sugar is harmful for diabetics — raises blood glucose directly'});
+  if(dis.includes('Hypertension')&&ingText.includes('salt'))
+    dangerItems.push({name:'salt/sodium (BP warning)',reason:'Even small amounts worsen hypertension — your condition requires strict sodium control'});
+  if(dis.includes('Kidney Disease')&&ingText.includes('potassium'))
+    dangerItems.push({name:'potassium (kidney warning)',reason:'High potassium is dangerous for kidney disease — can cause cardiac arrest'});
+
+  const rating=dangerItems.length>=2?'NOT RECOMMENDED':dangerItems.length===1?'MODERATE CONCERN':warnItems.length>2?'MODERATE CONCERN':'SAFE';
+  const rColor=rating==='SAFE'?'var(--forest)':rating==='MODERATE CONCERN'?'#D4930A':'var(--spice)';
+  const rBg=rating==='SAFE'?'var(--forest-light)':rating==='MODERATE CONCERN'?'#FEF3C7':'var(--spice-light)';
+  const rIcon=rating==='SAFE'?'✅':rating==='MODERATE CONCERN'?'⚠️':'❌';
+
+  let html='<div class="card" style="background:'+rBg+';border-color:'+rColor+';margin-bottom:13px">'
+    +'<div style="font-size:18px;font-weight:600;color:'+rColor+';margin-bottom:3px">'+rIcon+' '+rating+'</div>'
+    +'<div style="font-size:13px;color:var(--dark)">'
+    +(prod?'<b>'+prod+'</b> — ':'')+
+    (dangerItems.length?dangerItems.length+' harmful ingredient(s) found.':warnItems.length?'No outright harmful items, but some to watch.':'Looks relatively clean for an Indian packaged product.')
+    +'</div></div>';
+
+  if(dangerItems.length){
+    html+='<div class="card"><div class="ctitle">🔴 Harmful Ingredients Found</div>';
+    for(const i of dangerItems) html+='<div class="ca danger"><b>'+i.name.toUpperCase()+'</b>'+i.reason+'</div>';
+    html+='</div>';
+  }
+  if(warnItems.length){
+    html+='<div class="card"><div class="ctitle">🟡 Ingredients to Watch</div>';
+    for(const i of warnItems) html+='<div class="ca warn"><b>'+i.name.toUpperCase()+'</b>'+i.reason+'</div>';
+    html+='</div>';
+  }
+  if(goodItems.length){
+    html+='<div class="card"><div class="ctitle">🟢 Good Ingredients</div>';
+    for(const i of goodItems) html+='<div class="ca good"><b>'+i.name.toUpperCase()+'</b>'+i.reason+'</div>';
+    html+='</div>';
+  }
+  if(!dangerItems.length&&!warnItems.length&&!goodItems.length){
+    html+='<div class="card" style="background:var(--forest-light);border-color:rgba(45,106,79,.2)">'
+      +'<p style="font-size:13px;color:var(--forest)">No known harmful ingredients detected in our database. Still check for hidden sugar (any word ending in "-ose" like glucose, fructose, maltose) and total sodium on the nutrition label.</p></div>';
+  }
+
+  // general India tips
+  html+='<div class="card"><div class="ctitle">📋 What to Check on Any Indian Packaged Food</div>'
+    +'<div class="ca warn"><b>SODIUM</b>Aim for less than 600mg per 100g serving</div>'
+    +'<div class="ca warn"><b>TOTAL SUGAR</b>Less than 5g per 100g is good; above 15g is concerning</div>'
+    +'<div class="ca warn"><b>SATURATED FAT</b>Less than 1.5g per 100g; check for palm/palmolein oil</div>'
+    +'<div class="ca good"><b>FIBRE</b>Above 3g per 100g is a good sign</div>'
+    +'<div class="ca good"><b>PROTEIN</b>Above 5g per 100g adds nutritional value</div>'
+    +'</div>';
+
+  document.getElementById('check-result').innerHTML=html;
+}
+
+updateBMI();
+</script>
+</body>
+</html>
